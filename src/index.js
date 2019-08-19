@@ -2,21 +2,22 @@ import ReactDOM from "react-dom";
 import React, { PureComponent } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-
+import toCrop from './toCrop.png'; 
 import "./App.css";
 
 class App extends PureComponent {
   state = {
-    src: null,
+    src: toCrop,
     blobs: []
   };
 
   onSelectFile = e => {
+    console.log('read', e.target.files);
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
-      reader.addEventListener("load", () =>
+      reader.addEventListener("load", () => {
         this.setState({ src: reader.result })
-      );
+      });
       reader.readAsDataURL(e.target.files[0]);
     }
   };
@@ -114,3 +115,4 @@ class App extends PureComponent {
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
+

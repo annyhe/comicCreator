@@ -5,8 +5,11 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "react": "16.5.0",
-    "react-dom": "16.5.0",
+    "@material-ui/core": "^4.3.2",
+    "@material-ui/lab": "^4.0.0-alpha.23",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-easy-crop": "^1.14.0",
     "react-image-crop": "8.2.0",
     "react-scripts": "1.1.4"
   },
