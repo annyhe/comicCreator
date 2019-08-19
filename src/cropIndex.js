@@ -11,7 +11,6 @@ class Crop extends PureComponent {
   };
 
   onSelectFile = e => {
-    console.log('read', e.target.files);
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener("load", () => {

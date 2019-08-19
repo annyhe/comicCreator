@@ -59,14 +59,26 @@ class URLImage extends React.Component {
 }
 
 class Images extends Component {
+  state = {
+    blob: ''
+  }
+
+  handleInputChange = (e) => {
+    this.setState({ blob: e.target.value});
+  }
   render() {
     return (
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <div>
+        <p>Blob: {this.state.blob}</p>
+        <input onChange={this.handleInputChange} value={this.blob} />
+        <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
-          <URLImage src="https://konvajs.org/assets/yoda.jpg" x={150} />
+          <URLImage src={this.state.blob || "https://konvajs.org/assets/yoda.jpg"} x={150} />
           <LionImage />
         </Layer>
       </Stage>
+
+      </div>
     );
   }
 }
