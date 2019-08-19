@@ -13,7 +13,8 @@
     "react-easy-crop": "^1.14.0",
     "react-image-crop": "8.2.0",
     "react-konva": "^16.9.0-0",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "use-image": "^1.0.4"
   },
   "devDependencies": {},
   "scripts": {

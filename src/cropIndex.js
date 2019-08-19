@@ -1,11 +1,10 @@
-import ReactDOM from "react-dom";
 import React, { PureComponent } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import toCrop from './toCrop.png'; 
 import "./App.css";
 
-class App extends PureComponent {
+class Crop extends PureComponent {
   state = {
     src: toCrop,
     blobs: []
@@ -114,5 +113,4 @@ class App extends PureComponent {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
-
+export default Crop;
