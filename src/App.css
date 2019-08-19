@@ -1,4 +1,22 @@
 .App {
   font-family: sans-serif;
   text-align: center;
+  box-sizing: border-box;
 }
+button, .file-upload {
+  height: 32px;
+  text-transform: uppercase;
+  background: purple;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  color: white;
+  display: block;
+  margin: 10px auto;
+  line-height: 190%;
+  width: 100%;
+}
+
+input[type="file"] {
+  display: none;
+} 

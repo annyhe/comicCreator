@@ -88,7 +88,10 @@ class Crop extends PureComponent {
     return (
       <div className="App">
         <div>
-          <input type="file" onChange={this.onSelectFile} />
+        <label for="file-upload" class="file-upload">
+            Upload File
+        </label>
+          <input type="file" id="file-upload" onChange={this.onSelectFile} />
         </div>
         {src && (
           <ReactCrop

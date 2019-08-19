@@ -7,84 +7,18 @@ import {
   Layer,
   Image,
   Rect,
-  Transformer,
   Group,
-  Text,
-  Tag
+  Text
 } from "react-konva";
 import useImage from "use-image";
-import Crop from "./cropIndex";
+import Crop from "./Crop";
+import EditableText from "./EditableText";
 import toCrop from './toCrop.png';
 
 const LionImage = props => {
   const [image] = useImage(props.url || toCrop);
-  return <Image draggable name={props.url || 'lion'} image={image} />;
+  return <Image style={{ maxWidth: "100%" }} draggable name={props.url || 'lion'} image={image} />;
 };
-class EditableText extends Component {
-  state = {
-    selectedShapeName: "",
-    textEditVisible: false,
-    textX: 0,
-    textY: 0,
-    textValue: this.props.textValue || "Hello"
-  };
-  handleTextDblClick = e => {
-    const absPos = e.target.getAbsolutePosition();
-    this.setState({
-      textEditVisible: true,
-      textX: absPos.x,
-      textY: absPos.y
-    });
-  };
-  handleTextEdit = e => {
-    this.setState({
-      textValue: e.target.value
-    });
-  };
-  handleTextareaKeyDown = e => {
-    if (e.keyCode === 13) {
-      this.setState({
-        textEditVisible: false
-      });
-    }
-  };
-
-  render() {
-    return (
-      <Group>
-        {/* need Portal to render DOM elements in konva canvas */}
-        <Portal>
-          <textarea
-            value={this.state.textValue}
-            style={{
-              display: this.state.textEditVisible ? "block" : "none",
-              position: "absolute",
-              top: this.state.textY + "px",
-              left: this.state.textX + "px"
-            }}
-            onChange={this.handleTextEdit}
-            onKeyDown={this.handleTextareaKeyDown}
-          />
-        </Portal>
-        <Text
-          draggable
-          name="text"
-          text={this.state.textValue}
-          x={225}
-          y={295}
-          fontSize={20}
-          onDblClick={this.handleTextDblClick}
-          fontSize={16}
-          fontFamily="Calibri"
-          fill="black"
-          width={220}
-          padding={15}
-          align="center"
-        />
-      </Group>
-    );
-  }
-}
 
 // function from https://stackoverflow.com/a/15832662/512042
 function downloadURI(uri, name) {
@@ -136,7 +70,6 @@ class KonvaStage extends Component {
             {this.props.children}
             <Handler selectedShapeName={this.state.selectedShapeName} />
             <EditableText textValue="how are you?" />
-            {/* <EditableText /> */}
           </Layer>
         </Stage>
       </div>
