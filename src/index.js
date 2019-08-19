@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import { render } from "react-dom";
 import Portal from "./Portal"; // to render DOM nodes in Konva
+import Handler from "./Handler"; // to resize image
 import {
   Stage,
   Layer,
@@ -13,10 +14,11 @@ import {
 } from "react-konva";
 import useImage from "use-image";
 import Crop from "./cropIndex";
+import toCrop from './toCrop.png';
 
 const LionImage = props => {
-  const [image] = useImage(props.url || "https://konvajs.org/assets/lion.png");
-  return <Image draggable image={image} />;
+  const [image] = useImage(props.url || toCrop);
+  return <Image draggable name={props.url || 'lion'} image={image} />;
 };
 class EditableText extends Component {
   state = {
@@ -95,9 +97,18 @@ function downloadURI(uri, name) {
 }
 
 class KonvaStage extends Component {
+  state = {
+    selectedShapeName: ""
+  };
+  handleStageClick = e => {
+    this.setState({
+      selectedShapeName: e.target.name()
+    });
+  };
+
   handleExportClick = () => {
     const dataURL = this.stageRef.getStage().toDataURL();
-    downloadURI(dataURL, 'stage.png');
+    downloadURI(dataURL, "stage.png");
   };
   render() {
     return (
@@ -106,6 +117,7 @@ class KonvaStage extends Component {
         <Stage
           width={window.innerWidth}
           height={window.innerHeight}
+          onClick={this.handleStageClick}
           ref={node => {
             this.stageRef = node;
           }}
@@ -120,9 +132,11 @@ class KonvaStage extends Component {
               draggable
               fill="white"
             />
+            {/* <LionImage /> */}
             {this.props.children}
+            <Handler selectedShapeName={this.state.selectedShapeName} />
             <EditableText textValue="how are you?" />
-            <EditableText />
+            {/* <EditableText /> */}
           </Layer>
         </Stage>
       </div>
