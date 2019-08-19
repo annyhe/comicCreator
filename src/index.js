@@ -1,118 +1,85 @@
 import ReactDOM from "react-dom";
-import React, { PureComponent } from "react";
-import ReactCrop from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
-import toCrop from './toCrop.png'; 
-import "./App.css";
+import React, { Component } from "react";
+import Konva from "konva";
+import { Stage, Layer, Rect } from "react-konva";
 
-class App extends PureComponent {
+// creates a random number between 1 and a number parameter passed in as "num"
+const random = num => Math.floor(Math.random() * num) + 1;
+
+// creates a new object with random: x, y, width, and height values (the number passed in represents a maximum value)
+const newRectangle = () => ({
+  x: random(250),
+  y: random(300),
+  width: random(100),
+  height: random(100)
+});
+
+export default class App extends Component {
+  // initializing state with a canvas JSON Array with a default rectangle
   state = {
-    src: toCrop,
-    blobs: []
+    canvas: [
+      {
+        x: 250,
+        y: 25,
+        width: 50,
+        height: 100
+      }
+    ]
   };
 
-  onSelectFile = e => {
-    console.log('read', e.target.files);
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        this.setState({ src: reader.result })
-      });
-      reader.readAsDataURL(e.target.files[0]);
-    }
+  // when clicking on a rectangle, it creates a new rectangle by spreading out previous canvas values and adding a new set of values
+  handleClick = () => {
+    this.setState(prevState => ({
+      canvas: [...prevState.canvas, { ...newRectangle() }]
+    }));
   };
 
-  // If you setState the crop in here you should return false.
-  onImageLoaded = image => {
-    this.imageRef = image;
-  };
-
-  onCropComplete = crop => {
-    this.makeClientCrop(crop);
-  };
-
-  onCropChange = (crop) => {
-    this.setState({ crop });
-  };
-
-  async makeClientCrop(crop) {
-    if (this.imageRef && crop.width && crop.height) {
-      const croppedImageUrl = await this.getCroppedImg(
-        this.imageRef,
-        crop,
-        "newFile.jpeg"
-      );
-      this.setState({ croppedImageUrl });
-    }
-  }
-
-  getCroppedImg(image, crop, fileName) {
-    const canvas = document.createElement("canvas");
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext("2d");
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(blob => {
-        if (!blob) {
-          //reject(new Error('Canvas is empty'));
-          console.error("Canvas is empty");
-          return;
-        }
-        blob.name = fileName;
-        window.URL.revokeObjectURL(this.fileUrl);
-        this.fileUrl = window.URL.createObjectURL(blob);
-        resolve(this.fileUrl);
-      }, "image/jpeg");
+  // handles rectangle dragging
+  handleDragStart = e => {
+    e.target.setAttrs({
+      shadowOffset: {
+        x: 15,
+        y: 15
+      },
+      scaleX: 1.1,
+      scaleY: 1.1
     });
-  }
+  };
 
-  saveCroppedImage = () => {
-    const { blobs, croppedImageUrl } = this.state;
-    this.setState({ blobs: [...blobs, croppedImageUrl]});
-  }
+  // handles rectangle dropping
+  handleDragEnd = e => {
+    e.target.to({
+      duration: 0.5,
+      easing: Konva.Easings.ElasticEaseOut,
+      scaleX: 1,
+      scaleY: 1,
+      shadowOffsetX: 5,
+      shadowOffsetY: 5
+    });
+  };
 
-  render() {
-    const { crop, croppedImageUrl, src, blobs } = this.state;
-
-    return (
-      <div className="App">
-        <div>
-          <input type="file" onChange={this.onSelectFile} />
-        </div>
-        {src && (
-          <ReactCrop
-            src={src}
-            crop={crop}
-            onImageLoaded={this.onImageLoaded}
-            onComplete={this.onCropComplete}
-            onChange={this.onCropChange}
+  render = () => (
+    <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Layer>
+        {this.state.canvas.map(({ height, width, x, y }, key) => ( // like a "for loop", this maps over this.state.canvas objects and pulls out the height, width, x, y properties to be used below
+          <Rect
+            key={key}
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            stroke="grey"
+            draggable
+            fill="blue"
+            shadowOffset={{ x: 5, y: 5 }}
+            onDragStart={this.handleDragStart}
+            onDragEnd={this.handleDragEnd}
+            onClick={this.handleClick}
           />
-        )}
-        {croppedImageUrl && (
-          <div><img alt="Crop" style={{ maxWidth: "100%" }} src={croppedImageUrl} />
-          <button onClick={this.saveCroppedImage}>save cropped image</button>
-          </div>
-        )}
-        { blobs.length && blobs.map((blob, index) => <img key={index} src={blob} alt={'cropped image ' + index} />)}
-      </div>
-    );
-  }
+        ))}
+      </Layer>
+    </Stage>
+  );
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
-

@@ -7,10 +7,12 @@
   "dependencies": {
     "@material-ui/core": "^4.3.2",
     "@material-ui/lab": "^4.0.0-alpha.23",
+    "konva": "^4.0.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-easy-crop": "^1.14.0",
     "react-image-crop": "8.2.0",
+    "react-konva": "^16.9.0-0",
     "react-scripts": "1.1.4"
   },
   "devDependencies": {},
