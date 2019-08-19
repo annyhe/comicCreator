@@ -88,7 +88,7 @@ class Crop extends PureComponent {
     return (
       <div className="App">
         <div>
-        <label for="file-upload" class="file-upload">
+        <label htmlFor="file-upload" className="file-upload">
             Upload File
         </label>
           <input type="file" id="file-upload" onChange={this.onSelectFile} />
