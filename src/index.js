@@ -1,14 +1,11 @@
 import React, { Component, useState } from "react";
 import { render } from "react-dom";
-import Portal from "./Portal"; // to render DOM nodes in Konva
 import Handler from "./Handler"; // to resize image
 import {
   Stage,
   Layer,
   Image,
-  Rect,
-  Group,
-  Text
+  Rect
 } from "react-konva";
 import useImage from "use-image";
 import Crop from "./Crop";
@@ -47,6 +44,7 @@ class KonvaStage extends Component {
   render() {
     return (
       <div>
+        <button onClick={this.props.addText}>Add text</button>
         <button onClick={this.handleExportClick}>Save to image</button>
         <Stage
           width={window.innerWidth}
@@ -66,10 +64,8 @@ class KonvaStage extends Component {
               draggable
               fill="white"
             />
-            {/* <LionImage /> */}
             {this.props.children}
             <Handler selectedShapeName={this.state.selectedShapeName} />
-            <EditableText textValue="how are you?" />
           </Layer>
         </Stage>
       </div>
@@ -79,21 +75,31 @@ class KonvaStage extends Component {
 
 class App extends Component {
   state = {
-    blobs: []
+    blobs: [],
+    texts: []
   };
+  addText = () => {
+      this.setState({texts: [...this.state.texts, 'hi']});
+  }
   saveCroppedImage = croppedImageUrl => {
     this.setState({ blobs: [...this.state.blobs, croppedImageUrl] });
   };
 
   render() {
-    const { blobs } = this.state;
+    const { blobs, texts } = this.state;
     const images = blobs.map((blob, index) => (
       <LionImage key={index} url={blob} alt={"cropped image " + index} />
     ));
+    const textComponents = texts.map((textValue, index) => (
+        <EditableText key={index} textValue={textValue} />
+      ));    
     return (
       <div>
         <Crop saveCroppedImage={this.saveCroppedImage} />
-        <KonvaStage>{images}</KonvaStage>
+        <KonvaStage addText={this.addText}>
+        {images}
+        {textComponents}
+        </KonvaStage>
       </div>
     );
   }

@@ -44,7 +44,7 @@ export default class EditableText extends Component {
             style={{
               display: this.state.textEditVisible ? "block" : "none",
               position: "absolute",
-              top: this.state.textY + "px",
+              top: this.state.textY + 700 + "px",
               left: this.state.textX + "px"
             }}
             onChange={this.handleTextEdit}
