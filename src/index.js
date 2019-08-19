@@ -50,7 +50,7 @@ class EditableText extends Component {
   render() {
     return (
       <Group>
-          {/* need Portal to render DOM elements in konva canvas */}
+        {/* need Portal to render DOM elements in konva canvas */}
         <Portal>
           <textarea
             value={this.state.textValue}
@@ -84,23 +84,44 @@ class EditableText extends Component {
   }
 }
 
+// function from https://stackoverflow.com/a/15832662/512042
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 class KonvaStage extends Component {
+  handleExportClick = () => {
+    const dataURL = this.stageRef.getStage().toDataURL();
+    downloadURI(dataURL, 'stage.png');
+  };
   render() {
     return (
-      <div> 
-        <Stage width={window.innerWidth} height={window.innerHeight}>
+      <div>
+        <button onClick={this.handleExportClick}>Save to image</button>
+        <Stage
+          width={window.innerWidth}
+          height={window.innerHeight}
+          ref={node => {
+            this.stageRef = node;
+          }}
+        >
           <Layer>
             <Rect
               x={100}
               y={100}
               width={400}
-              height={600}
+              height={500}
               stroke="black"
               draggable
               fill="white"
             />
             {this.props.children}
-            <EditableText textValue='how are you?'/>
+            <EditableText textValue="how are you?" />
             <EditableText />
           </Layer>
         </Stage>
@@ -113,7 +134,6 @@ class App extends Component {
   state = {
     blobs: []
   };
-
   saveCroppedImage = croppedImageUrl => {
     this.setState({ blobs: [...this.state.blobs, croppedImageUrl] });
   };
