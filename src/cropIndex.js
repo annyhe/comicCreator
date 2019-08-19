@@ -7,7 +7,6 @@ import "./App.css";
 class Crop extends PureComponent {
   state = {
     src: toCrop,
-    blobs: []
   };
 
   onSelectFile = e => {
@@ -80,12 +79,11 @@ class Crop extends PureComponent {
   }
 
   saveCroppedImage = () => {
-    const { blobs, croppedImageUrl } = this.state;
-    this.setState({ blobs: [...blobs, croppedImageUrl]});
+    this.props.saveCroppedImage(this.state.croppedImageUrl);
   }
 
   render() {
-    const { crop, croppedImageUrl, src, blobs } = this.state;
+    const { crop, croppedImageUrl, src } = this.state;
 
     return (
       <div className="App">
@@ -106,7 +104,6 @@ class Crop extends PureComponent {
           <button onClick={this.saveCroppedImage}>save cropped image</button>
           </div>
         )}
-        { blobs.length && blobs.map((blob, index) => <img key={index} src={blob} alt={'cropped image ' + index} />)}
       </div>
     );
   }
