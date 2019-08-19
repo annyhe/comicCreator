@@ -24,7 +24,7 @@ class EditableText extends Component {
     textEditVisible: false,
     textX: 0,
     textY: 0,
-    textValue: "Hello"
+    textValue: this.props.textValue || "Hello"
   };
   handleTextDblClick = e => {
     const absPos = e.target.getAbsolutePosition();
@@ -48,82 +48,23 @@ class EditableText extends Component {
   };
 
   render() {
-    return ( 
-      <Portal>
-        <textarea
-          value={this.state.textValue}
-          style={{
-            display: this.state.textEditVisible ? "block" : "none",
-            position: "absolute",
-            top: this.state.textY + "px",
-            left: this.state.textX + "px"
-          }}
-          onChange={this.handleTextEdit}
-          onKeyDown={this.handleTextareaKeyDown}
-        />
-
-      </Portal>
-    );
-  }
-}
-
-class KonvaStage extends Component {
-    state = {
-        selectedShapeName: "",
-        textEditVisible: false,
-        textX: 400,
-        textY: 400,
-        textValue: "Hello"
-      };
-      handleTextDblClick = e => {
-        const absPos = e.target.getAbsolutePosition();
-        this.setState({
-          textEditVisible: true,
-          textX: absPos.x,
-          textY: absPos.y
-        });
-      };
-      handleTextEdit = e => {
-        this.setState({
-          textValue: e.target.value
-        });
-      };
-      handleTextareaKeyDown = e => {
-        if (e.keyCode === 13) {
-          this.setState({
-            textEditVisible: false
-          });
-        }
-      };    
-  render() {
     return (
-      <div>
-                  <textarea
-          value={this.state.textValue}
-          style={{
-            display: this.state.textEditVisible ? "block" : "none",
-            position: "absolute",
-            top: this.state.textY + "px",
-            left: this.state.textX + "px"
-          }}
-          onChange={this.handleTextEdit}
-          onKeyDown={this.handleTextareaKeyDown}
-        />
-        <Stage width={window.innerWidth} height={window.innerHeight}>
-          <Layer>
-            <Rect
-              x={100}
-              y={100}
-              width={400}
-              height={600}
-              stroke="black"
-              draggable
-              fill="white"
-            />
-            {this.props.children}
-
-
-      <Text
+      <Group>
+          {/* need Portal to render DOM elements in konva canvas */}
+        <Portal>
+          <textarea
+            value={this.state.textValue}
+            style={{
+              display: this.state.textEditVisible ? "block" : "none",
+              position: "absolute",
+              top: this.state.textY + "px",
+              left: this.state.textX + "px"
+            }}
+            onChange={this.handleTextEdit}
+            onKeyDown={this.handleTextareaKeyDown}
+          />
+        </Portal>
+        <Text
           draggable
           name="text"
           text={this.state.textValue}
@@ -138,7 +79,29 @@ class KonvaStage extends Component {
           padding={15}
           align="center"
         />
+      </Group>
+    );
+  }
+}
 
+class KonvaStage extends Component {
+  render() {
+    return (
+      <div> 
+        <Stage width={window.innerWidth} height={window.innerHeight}>
+          <Layer>
+            <Rect
+              x={100}
+              y={100}
+              width={400}
+              height={600}
+              stroke="black"
+              draggable
+              fill="white"
+            />
+            {this.props.children}
+            <EditableText textValue='how are you?'/>
+            <EditableText />
           </Layer>
         </Stage>
       </div>
@@ -163,9 +126,7 @@ class App extends Component {
     return (
       <div>
         <Crop saveCroppedImage={this.saveCroppedImage} />
-        <KonvaStage>
-          {images}
-        </KonvaStage>
+        <KonvaStage>{images}</KonvaStage>
       </div>
     );
   }
