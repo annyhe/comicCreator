@@ -1,54 +1,61 @@
 import { render } from "react-dom";
-import React, { Component } from "react";
-import { Stage, Layer, Line, Text } from "react-konva";
-export default class Canvas extends Component {
-  state = {
-    lines: []
-  };
-  handleMouseDown = () => {
-    this._drawing = true;
-    this.setState({
-      lines: [...this.state.lines, []]
-    });
-  };
-  handleMouseUp = () => {
-    this._drawing = false;
-  };
-  handleMouseMove = e => {
-    if (!this._drawing) {
+import React, { useState, useRef } from "react";
+import { Stage, Layer, Line } from "react-konva";
+
+function Canvas() {
+  const [lines, setLines] = useState([]);
+  const [isDrawing, setIsDrawing] = useState();
+  const [isMouseClicked, setIsMouseClicked] = useState();
+  const stageRef = useRef(null);
+  const handleMouseMove = () => {
+    if (!isDrawing || !isMouseClicked) {
       return;
     }
-    const stage = this.stageRef.getStage();
+    const stage = stageRef.current;
     const point = stage.getPointerPosition();
-    const { lines } = this.state;
-    let lastLine = lines[lines.length - 1];
-    lastLine = lastLine.concat([point.x, point.y]);
-    lines.splice(lines.length - 1, 1, lastLine);
-    this.setState({
-      lines: lines.concat()
-    });
+    if (lines.length) {
+      let lastLine = lines[lines.length - 1];
+      lastLine = lastLine.concat([point.x, point.y]);
+      lines.splice(lines.length - 1, 1, lastLine);
+      setLines(lines.concat());
+    }
   };
-  render() {
-    return (
+
+  return (
+    <div>
+      <p>
+        Click on Start Drawing to draw with mouse. You can drag the drawing
+        around.
+      </p>
+      <button onClick={() => setIsDrawing(true)}>Start drawing</button>
+      <button onClick={() => setIsDrawing()}>Stop drawing</button>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
-        onContentMousedown={this.handleMouseDown}
-        onContentMousemove={this.handleMouseMove}
-        onContentMouseup={this.handleMouseUp}
-        ref={node => {
-          this.stageRef = node;
+        onContentMousedown={() => {
+          if (!isDrawing) {
+            return;
+          }
+          setIsMouseClicked(true);
+          setLines([...lines, []]);
         }}
+        onContentMousemove={handleMouseMove}
+        onContentMouseup={() => {
+          setIsDrawing(false);
+          setIsMouseClicked(false);
+        }}
+        ref={stageRef}
       >
         <Layer>
-          <Text text="Draw a thing!" />
-          {this.state.lines.map((line, i) => (
-            <Line key={i} points={line} stroke="red" />
+          {lines.map((line, i) => (
+            <Line key={i} points={line} draggable stroke="black" />
           ))}
         </Layer>
       </Stage>
-    );
-  }
+    </div>
+  );
 }
 
 render(<Canvas />, document.getElementById("root"));
+
+export default Canvas;
