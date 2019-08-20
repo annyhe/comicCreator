@@ -16,8 +16,8 @@ function downloadURI(uri, name) {
 function KonvaStage(props) {
   const stageRef = useRef(null);
   const [selectedShapeName, setSelectedShapeName] = useState([]);
-    const [width, setWidth] = useState(SHORT);
-    const [height, setHeight] = useState(LONG);
+  const [width, setWidth] = useState(SHORT);
+  const [height, setHeight] = useState(LONG);
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState();
   const [isMouseClicked, setIsMouseClicked] = useState();
@@ -36,32 +36,42 @@ function KonvaStage(props) {
   };
   return (
     <div>
-              <p>
+      <p>
         Click on Start Drawing to draw with mouse. You can drag the drawing
         around.
       </p>
-        <div className='stage'>
-      <button onClick={() => setIsDrawing(true)}>Start drawing</button>
-      <button onClick={() => setIsDrawing()}>Stop drawing</button>
-      <button onClick={props.addText}>Add text</button>
-      <button
-        onClick={() => {
-          const dataURL = stageRef.current.toDataURL();
-          downloadURI(dataURL, "stage.png");
-        }}
-      >
-        Save to image
-      </button>
-      <button onClick={() => {
-          setWidth(LONG);
-          setHeight(SHORT);
-      }}>Landscape</button>
-      <button onClick={() => {
-          setWidth(SHORT);
-          setHeight(LONG);
-      }}>Portrait</button>
+      <div className="stage">
+        <button onClick={() => setIsDrawing(true)}>Start drawing</button>
+        <button onClick={() => setIsDrawing()}>Stop drawing</button>
+        <button onClick={props.addText}>Add text</button>
+        <button
+          onClick={() => {
+            const dataURL = stageRef.current.toDataURL();
+            downloadURI(dataURL, "stage.png");
+          }}
+        >
+          Save to image
+        </button>
+        <button
+          onClick={() => {
+            setWidth(LONG);
+            setHeight(SHORT);
+          }}
+        >
+          Landscape
+        </button>
+        <button
+          onClick={() => {
+            setWidth(SHORT);
+            setHeight(LONG);
+          }}
+        >
+          Portrait
+        </button>
       </div>
-
+      <button onClick={() => console.log(stageRef.current.toJSON())}>
+        Get JSON
+      </button>
       <Stage
         onContentMousedown={() => {
           if (!isDrawing) {

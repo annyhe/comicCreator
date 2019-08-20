@@ -32,7 +32,7 @@ function App() {
       />
       <KonvaStage addText={() => setTexts([...texts, "hi"])}>
         {texts.map((textValue, index) => (
-          <EditableText key={index} textValue={textValue} />
+          <EditableText key={index} textValue={textValue} x={100} y={100}/>
         ))}
         {blobs.map((blob, index) => (
           <LionImage key={index} url={blob} alt={"cropped image " + index} />

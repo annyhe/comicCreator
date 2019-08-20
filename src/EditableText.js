@@ -34,8 +34,8 @@ function EditableText(props) {
         draggable
         name="text"
         text={textValue}
-        x={100}
-        y={100}
+        x={props.x}
+        y={props.y}
         fontSize={20}
         onDblClick={e => {
           const absPos = e.target.getAbsolutePosition();
