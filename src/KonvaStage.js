@@ -69,8 +69,14 @@ function KonvaStage(props) {
           Portrait
         </button>
       </div>
-      <button onClick={() => console.log(stageRef.current.toJSON())}>
-        Get JSON
+      <button
+        onClick={() => {
+            console.log('set to json');
+            const json = stageRef.current.toJSON();
+            localStorage.setItem("konva", json);            
+        }}
+      >
+        Save JSON to browser
       </button>
       <Stage
         onContentMousedown={() => {

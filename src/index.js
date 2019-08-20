@@ -13,7 +13,9 @@ const LionImage = props => {
     <Image
       style={{ maxWidth: "100%" }}
       draggable
-      onDragStart={(el) => {el.target.moveToTop();}}
+      onDragStart={el => {
+        el.target.moveToTop();
+      }}
       name={props.url || "lion"}
       image={image}
     />
@@ -25,14 +27,26 @@ function App() {
   const [texts, setTexts] = useState([]);
   return (
     <div>
+      <button
+        onClick={() => {
+          const str = localStorage.getItem("konva");
+          if (str) {
+            const texts = JSON.parse(str).children[0].children.filter((child) => child.className === 'Group').filter((group) => group.children[0].className === 'Text').map((group) => group.children[0].attrs)
+            console.log('texts', texts);  
+            setTexts(texts)          
+          }
+        }}
+      >
+        Load Stage
+      </button>
       <Crop
         saveCroppedImage={croppedImageUrl =>
           setBlob([...blobs, croppedImageUrl])
         }
       />
-      <KonvaStage addText={() => setTexts([...texts, "hi"])}>
-        {texts.map((textValue, index) => (
-          <EditableText key={index} textValue={textValue} x={100} y={100}/>
+      <KonvaStage addText={() => setTexts([...texts, {text: "hi"}])}>
+        {texts.map((textObject, index) => (
+          <EditableText key={index} textValue={textObject.text} x={textObject.x || 100} y={textObject.y || 100} />
         ))}
         {blobs.map((blob, index) => (
           <LionImage key={index} url={blob} alt={"cropped image " + index} />
