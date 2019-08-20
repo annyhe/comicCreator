@@ -1,8 +1,8 @@
-Croppingl libraries:
+TODO:
 
-react-easy-crop
-- easier to implement, has the slider
-- remove the fixed aspect ratio :(
+- load images from google drive
+- save images to google drive
+
 
 react-image-crop
 - can load files from file picker, auto-loads from sample file in /src

@@ -3,6 +3,11 @@
   text-align: center;
   box-sizing: border-box;
 }
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+
+}
 button, .file-upload {
   height: 32px;
   text-transform: uppercase;
@@ -14,7 +19,7 @@ button, .file-upload {
   display: block;
   margin: 10px auto;
   line-height: 190%;
-  width: 100%;
+  min-width: 150px;
 }
 
 input[type="file"] {

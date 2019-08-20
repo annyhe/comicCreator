@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Rect } from "react-konva";
 import Handler from "./Handler"; // to resize image
-
+const SHORT = 360;
+const LONG = 510;
 // function from https://stackoverflow.com/a/15832662/512042
 function downloadURI(uri, name) {
   var link = document.createElement("a");
@@ -15,7 +16,8 @@ function downloadURI(uri, name) {
 function KonvaStage(props) {
   const stageRef = useRef(null);
   const [selectedShapeName, setSelectedShapeName] = useState([]);
-
+    const [width, setWidth] = useState(SHORT);
+    const [height, setHeight] = useState(LONG);
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState();
   const [isMouseClicked, setIsMouseClicked] = useState();
@@ -34,10 +36,11 @@ function KonvaStage(props) {
   };
   return (
     <div>
-      <p>
+              <p>
         Click on Start Drawing to draw with mouse. You can drag the drawing
         around.
       </p>
+        <div className='stage'>
       <button onClick={() => setIsDrawing(true)}>Start drawing</button>
       <button onClick={() => setIsDrawing()}>Stop drawing</button>
       <button onClick={props.addText}>Add text</button>
@@ -49,6 +52,16 @@ function KonvaStage(props) {
       >
         Save to image
       </button>
+      <button onClick={() => {
+          setWidth(LONG);
+          setHeight(SHORT);
+      }}>Landscape</button>
+      <button onClick={() => {
+          setWidth(SHORT);
+          setHeight(LONG);
+      }}>Portrait</button>
+      </div>
+
       <Stage
         onContentMousedown={() => {
           if (!isDrawing) {
@@ -82,8 +95,8 @@ function KonvaStage(props) {
           <Rect
             x={100}
             y={100}
-            width={400}
-            height={500}
+            width={width}
+            height={height}
             stroke="black"
             fill="white"
           />
