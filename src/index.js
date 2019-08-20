@@ -1,61 +1,45 @@
+import React, { useState } from "react";
 import { render } from "react-dom";
-import React, { useState, useRef } from "react";
-import { Stage, Layer, Line } from "react-konva";
+import { Image } from "react-konva";
+import useImage from "use-image";
+import Crop from "./Crop";
+import KonvaStage from "./KonvaStage";
+import EditableText from "./EditableText";
+import toCrop from "./toCrop.png";
 
-function Canvas() {
-  const [lines, setLines] = useState([]);
-  const [isDrawing, setIsDrawing] = useState();
-  const [isMouseClicked, setIsMouseClicked] = useState();
-  const stageRef = useRef(null);
-  const handleMouseMove = () => {
-    if (!isDrawing || !isMouseClicked) {
-      return;
-    }
-    const stage = stageRef.current;
-    const point = stage.getPointerPosition();
-    if (lines.length) {
-      let lastLine = lines[lines.length - 1];
-      lastLine = lastLine.concat([point.x, point.y]);
-      lines.splice(lines.length - 1, 1, lastLine);
-      setLines(lines.concat());
-    }
-  };
+const LionImage = props => {
+  const [image] = useImage(props.url || toCrop);
+  return (
+    <Image
+      style={{ maxWidth: "100%" }}
+      draggable
+      onDragStart={(el) => {el.target.moveToTop();}}
+      name={props.url || "lion"}
+      image={image}
+    />
+  );
+};
 
+function App() {
+  const [blobs, setBlob] = useState([]);
+  const [texts, setTexts] = useState([]);
   return (
     <div>
-      <p>
-        Click on Start Drawing to draw with mouse. You can drag the drawing
-        around.
-      </p>
-      <button onClick={() => setIsDrawing(true)}>Start drawing</button>
-      <button onClick={() => setIsDrawing()}>Stop drawing</button>
-      <Stage
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onContentMousedown={() => {
-          if (!isDrawing) {
-            return;
-          }
-          setIsMouseClicked(true);
-          setLines([...lines, []]);
-        }}
-        onContentMousemove={handleMouseMove}
-        onContentMouseup={() => {
-          setIsDrawing(false);
-          setIsMouseClicked(false);
-        }}
-        ref={stageRef}
-      >
-        <Layer>
-          {lines.map((line, i) => (
-            <Line key={i} points={line} draggable stroke="black" />
-          ))}
-        </Layer>
-      </Stage>
+      <Crop
+        saveCroppedImage={croppedImageUrl =>
+          setBlob([...blobs, croppedImageUrl])
+        }
+      />
+      <KonvaStage addText={() => setTexts([...texts, "hi"])}>
+        {texts.map((textValue, index) => (
+          <EditableText key={index} textValue={textValue} />
+        ))}
+        {blobs.map((blob, index) => (
+          <LionImage key={index} url={blob} alt={"cropped image " + index} />
+        ))}
+      </KonvaStage>
     </div>
   );
 }
 
-render(<Canvas />, document.getElementById("root"));
-
-export default Canvas;
+render(<App />, document.getElementById("root"));
