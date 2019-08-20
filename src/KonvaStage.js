@@ -3,6 +3,7 @@ import { Stage, Layer, Line, Rect } from "react-konva";
 import Handler from "./Handler"; // to resize image
 const SHORT = 360;
 const LONG = 510;
+
 // function from https://stackoverflow.com/a/15832662/512042
 function downloadURI(uri, name) {
   var link = document.createElement("a");
@@ -71,13 +72,14 @@ function KonvaStage(props) {
       </div>
       <button
         onClick={() => {
-            console.log('set to json');
-            const json = stageRef.current.toJSON();
-            localStorage.setItem("konva", json);            
+          console.log("set to json");
+          const json = stageRef.current.toJSON();
+          localStorage.setItem("konva", json);
         }}
       >
         Save JSON to browser
       </button>
+      <button onClick={props.loadStage}>Load Stage</button>
       <Stage
         onContentMousedown={() => {
           if (!isDrawing) {

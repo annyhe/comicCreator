@@ -25,26 +25,23 @@ const LionImage = props => {
 function App() {
   const [blobs, setBlob] = useState([]);
   const [texts, setTexts] = useState([]);
+  const loadStage = () => {
+    const str = localStorage.getItem("konva");
+    if (str) {
+      const texts = JSON.parse(str).children[0].children.filter((child) => child.className === 'Group').filter((group) => group.children[0].className === 'Text').map((group) => group.children[0].attrs)
+      console.log('texts', texts);  
+      setTexts(texts)          
+    }
+  }  
   return (
     <div>
-      <button
-        onClick={() => {
-          const str = localStorage.getItem("konva");
-          if (str) {
-            const texts = JSON.parse(str).children[0].children.filter((child) => child.className === 'Group').filter((group) => group.children[0].className === 'Text').map((group) => group.children[0].attrs)
-            console.log('texts', texts);  
-            setTexts(texts)          
-          }
-        }}
-      >
-        Load Stage
-      </button>
       <Crop
         saveCroppedImage={croppedImageUrl =>
           setBlob([...blobs, croppedImageUrl])
         }
       />
-      <KonvaStage addText={() => setTexts([...texts, {text: "hi"}])}>
+      <KonvaStage loadStage={loadStage}
+        addText={() => setTexts([...texts, {text: "hi"}])}>
         {texts.map((textObject, index) => (
           <EditableText key={index} textValue={textObject.text} x={textObject.x || 100} y={textObject.y || 100} />
         ))}
