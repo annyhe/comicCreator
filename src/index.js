@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useRef, useState } from "react";
 import { render } from "react-dom";
 import Handler from "./Handler"; // to resize image
 import { Stage, Layer, Image, Rect } from "react-konva";
@@ -29,14 +29,15 @@ function downloadURI(uri, name) {
   document.body.removeChild(link);
 }
 
-const KonvaStage = (props) => {
+function KonvaStage(props) {
+  const stageRef = useRef(null);
   const [selectedShapeName, setSelectedShapeName] = useState([]);
   return (
     <div>
       <button onClick={props.addText}>Add text</button>
       <button
         onClick={() => {
-          const dataURL = this.stageRef.getStage().toDataURL();
+          const dataURL = stageRef.getStage().toDataURL();
           downloadURI(dataURL, "stage.png");
         }}
       >
@@ -46,9 +47,7 @@ const KonvaStage = (props) => {
         width={window.innerWidth}
         height={window.innerHeight}
         onClick={e => setSelectedShapeName(e.target.name())}
-        ref={node => {
-          this.stageRef = node;
-        }}
+        ref={stageRef}
       >
         <Layer>
           <Rect
