@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Portal from "./Portal"; // to render DOM nodes in Konva
 import { Group, Text } from "react-konva";
 
 function EditableText(props) {
+  const textAreaRef = useRef(null);
   const [textEditVisible, setTextEditVisible] = useState();
   const [textX, setTextX] = useState(0);
   const [textY, setTextY] = useState(0);
@@ -13,11 +14,12 @@ function EditableText(props) {
       {/* need Portal to render DOM elements in konva canvas */}
       <Portal>
         <textarea
+          ref={textAreaRef}
           value={textValue}
           style={{
             display: textEditVisible ? "block" : "none",
             position: "absolute",
-            top: textY + 700 + "px",
+            top: textY + 500 + "px",
             left: textX + "px"
           }}
           onChange={e => setTextValue(e.target.value)}
@@ -32,20 +34,20 @@ function EditableText(props) {
         draggable
         name="text"
         text={textValue}
-        x={225}
-        y={295}
+        x={100}
+        y={100}
         fontSize={20}
         onDblClick={e => {
           const absPos = e.target.getAbsolutePosition();
           setTextEditVisible(true);
           setTextX(absPos.x);
           setTextY(absPos.y);
+          textAreaRef.current.focus();
         }}
-        fontSize={16}
         fontFamily="Calibri"
         fill="black"
         width={220}
-        padding={15}
+        padding={16}
         align="center"
       />
     </Group>

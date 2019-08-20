@@ -104,7 +104,7 @@ class Crop extends PureComponent {
         )}
         {croppedImageUrl && (
           <div><img alt="Crop" style={{ maxWidth: "100%" }} src={croppedImageUrl} />
-          <button onClick={this.saveCroppedImage}>save cropped image</button>
+          <button onClick={this.saveCroppedImage}>Add cropped image to panel</button>
           </div>
         )}
       </div>
