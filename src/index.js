@@ -45,6 +45,8 @@ function App() {
   };
   return (
     <div>
+      <button>Load from Google Drive</button>
+      <button>Save to Google Drive</button>
       <Crop
       setBlobMapping={([key, value]) => {
         blobMap[key] = value;
