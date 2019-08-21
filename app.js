@@ -22,7 +22,7 @@ app.use(
 
 // cloud = [cloudinary, salesforce]
 app.post("/api/saveToCloud", (req, res) => {
-  const { name, data } = req.body;
+  const { name, data, json } = req.body;
   return new Promise(function(resolve, reject) {
     cloudinary.v2.uploader.upload(
       data,
@@ -34,7 +34,7 @@ app.post("/api/saveToCloud", (req, res) => {
         if (result) {
           let cloudinaryImageURL = result.secure_url;
           console.log("cloudinary url", cloudinaryImageURL);
-          resolve(loginAndCreateComic(name, data, cloudinaryImageURL));
+          resolve(loginAndCreateComic(name, json, cloudinaryImageURL));
         } else if (error) {
           console.log("Error from saveToCloudinary", error);
           reject(error);

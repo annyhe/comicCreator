@@ -185,12 +185,12 @@ function displayContactsMethodChain() {
     });
 }
 
-function createComic(name, data, imageURL) {
+function createComic(name, json, imageURL) {
   return new Promise(function(resolve, reject) {
     console.log("create");
     conn
       .sobject("Comic__c")
-      .create({ Name: name, json__c: data, URL__c: imageURL}, function(err, ret) {
+      .create({ Name: name, json__c: json, URL__c: imageURL}, function(err, ret) {
         if (err || !ret.success) {
           reject(err, ret);
         } else {

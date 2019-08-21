@@ -32,28 +32,29 @@ function App() {
     const str = localStorage.getItem("konva");
     if (str) {
       const obj = JSON.parse(str);
-      const texts = obj
-        .children[0].children.filter(child => child.className === "Group")
+      const texts = obj.children[0].children
+        .filter(child => child.className === "Group")
         .filter(group => group.children[0].className === "Text")
         .map(group => group.children[0].attrs);
       setTexts(texts);
-      const imageObjects = obj.children[0].children.filter((child) => child.className === 'Image').map((obj) => obj.attrs);      
+      const imageObjects = obj.children[0].children
+        .filter(child => child.className === "Image")
+        .map(obj => obj.attrs);
 
-      console.log('find base64 from here', imageObjects[0]);
+      console.log("find base64 from here", imageObjects[0]);
       setBlob(imageObjects);
     }
   };
   return (
     <div>
       <button>Load from Google Drive</button>
-      <button>Save to Google Drive</button>
       <Crop
-      setBlobMapping={([key, value]) => {
-        blobMap[key] = value;
-        setBlobMap(blobMap);
-      }}
+        setBlobMapping={([key, value]) => {
+          blobMap[key] = value;
+          setBlobMap(blobMap);
+        }}
         saveCroppedImage={croppedImageUrl =>
-          setBlob([...blobs, {url: croppedImageUrl}])
+          setBlob([...blobs, { url: croppedImageUrl }])
         }
       />
       <KonvaStage
@@ -72,8 +73,14 @@ function App() {
         {blobs.map((blob, index) => {
           console.log(blob);
           return (
-            <LionImage key={index} url={blob.name || blob.url} x={blob.x || 100} y={blob.y || 100} alt={"cropped image " + index} />
-          )
+            <LionImage
+              key={index}
+              url={blob.name || blob.url}
+              x={blob.x || 100}
+              y={blob.y || 100}
+              alt={"cropped image " + index}
+            />
+          );
         })}
       </KonvaStage>
     </div>

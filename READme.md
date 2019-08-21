@@ -2,11 +2,10 @@ DONE
 - save images to google drive, with base64 from POST body
 - load images from google drive
 - post to cloudinary
+- save to salesforce: create new comic record with name, json, and url from cloudinary 
 
 TODO
-- connect server and client on 4 REST requests
-- add Salesforce to express:
-    - POST: create new comic record, post json
+    
 
 BUGS
 - CORB on accessing google drive file from Salesforce, causing image broken if formula(googleDriveURL). alternatives

@@ -35,6 +35,25 @@ function KonvaStage(props) {
       setLines(lines.concat());
     }
   };
+  const saveToSalesforce = () => {
+    const url = "/api/saveToCloud";
+    const dataObject = {
+      name: "example.jpg",
+      json: stageRef.current.toJSON(),
+      data: stageRef.current.toDataURL()
+    };
+
+    fetch(url, {
+      method: "POST", // or 'PUT'
+      body: JSON.stringify(dataObject), // data can be `string` or {object}!
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(recordID => console.log("Success:", 'https://choochoochoo-dev-ed.lightning.force.com/lightning/r/Comic__c/' + recordID + '/view'))
+      .catch(error => console.error("Error:", error));
+  };
   return (
     <div>
       <p>
@@ -69,28 +88,27 @@ function KonvaStage(props) {
         >
           Portrait
         </button>
+        <button onClick={saveToSalesforce}>Save to Salesforce</button>
       </div>
       <button
         onClick={() => {
-          // loop through and find image nodes. change their name property to url. also change their blob to base64
-
           console.log("set to json");
-          const {blobMap} = props;
+          const { blobMap } = props;
           const json = stageRef.current.toJSON();
           const obj = JSON.parse(json);
           const childNodes = obj.children[0].children;
-          childNodes.forEach((child) => {
-            if (child.className === 'Image') {
-                let {name} = child.attrs;
-                console.log('in get', blobMap[name]);
-                if (blobMap[name]) {
-                  child.attrs.name = blobMap[name];
-                  console.log('success', name, child.attrs.name);
-                }
+          // loop through and find image nodes. change their blob to base64
+          childNodes.forEach(child => {
+            if (child.className === "Image") {
+              let { name } = child.attrs;
+              if (blobMap[name]) {
+                child.attrs.name = blobMap[name];
+                console.log("success", name, child.attrs.name);
+              }
             }
           });
-          
-          console.log('find blob url from here', obj);
+
+          console.log("find blob url from here", obj);
           localStorage.setItem("konva", JSON.stringify(obj));
         }}
       >
