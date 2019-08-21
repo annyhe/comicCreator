@@ -64,6 +64,7 @@ class Crop extends PureComponent {
     );
 
     return new Promise((resolve, reject) => {
+      const base64Image = canvas.toDataURL('image/jpeg');
       canvas.toBlob(blob => {
         if (!blob) {
           //reject(new Error('Canvas is empty'));
@@ -73,6 +74,8 @@ class Crop extends PureComponent {
         blob.name = fileName;
         window.URL.revokeObjectURL(this.fileUrl);
         this.fileUrl = window.URL.createObjectURL(blob);
+        this.props.setBlobMapping([this.fileUrl, base64Image]);
+
         resolve(this.fileUrl);
       }, "image/jpeg");
     });

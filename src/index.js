@@ -16,6 +16,8 @@ const LionImage = props => {
       onDragStart={el => {
         el.target.moveToTop();
       }}
+      x={props.x || 100}
+      y={props.y || 100}
       name={props.url || "lion"}
       image={image}
     />
@@ -24,30 +26,53 @@ const LionImage = props => {
 
 function App() {
   const [blobs, setBlob] = useState([]);
+  const [blobMap, setBlobMap] = useState({});
   const [texts, setTexts] = useState([]);
   const loadStage = () => {
     const str = localStorage.getItem("konva");
     if (str) {
-      const texts = JSON.parse(str).children[0].children.filter((child) => child.className === 'Group').filter((group) => group.children[0].className === 'Text').map((group) => group.children[0].attrs)
-      console.log('texts', texts);  
-      setTexts(texts)          
+      const obj = JSON.parse(str);
+      const texts = obj
+        .children[0].children.filter(child => child.className === "Group")
+        .filter(group => group.children[0].className === "Text")
+        .map(group => group.children[0].attrs);
+      setTexts(texts);
+      const imageObjects = obj.children[0].children.filter((child) => child.className === 'Image').map((obj) => obj.attrs);      
+
+      console.log('find base64 from here', imageObjects[0]);
+      setBlob(imageObjects);
     }
-  }  
+  };
   return (
     <div>
       <Crop
+      setBlobMapping={([key, value]) => {
+        blobMap[key] = value;
+        setBlobMap(blobMap);
+      }}
         saveCroppedImage={croppedImageUrl =>
-          setBlob([...blobs, croppedImageUrl])
+          setBlob([...blobs, {url: croppedImageUrl}])
         }
       />
-      <KonvaStage loadStage={loadStage}
-        addText={() => setTexts([...texts, {text: "hi"}])}>
+      <KonvaStage
+        blobMap={blobMap}
+        loadStage={loadStage}
+        addText={() => setTexts([...texts, { text: "hi" }])}
+      >
         {texts.map((textObject, index) => (
-          <EditableText key={index} textValue={textObject.text} x={textObject.x || 100} y={textObject.y || 100} />
+          <EditableText
+            key={index}
+            textValue={textObject.text}
+            x={textObject.x || 100}
+            y={textObject.y || 100}
+          />
         ))}
-        {blobs.map((blob, index) => (
-          <LionImage key={index} url={blob} alt={"cropped image " + index} />
-        ))}
+        {blobs.map((blob, index) => {
+          console.log(blob);
+          return (
+            <LionImage key={index} url={blob.name || blob.url} x={blob.x || 100} y={blob.y || 100} alt={"cropped image " + index} />
+          )
+        })}
       </KonvaStage>
     </div>
   );

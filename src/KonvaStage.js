@@ -72,9 +72,26 @@ function KonvaStage(props) {
       </div>
       <button
         onClick={() => {
+          // loop through and find image nodes. change their name property to url. also change their blob to base64
+
           console.log("set to json");
+          const {blobMap} = props;
           const json = stageRef.current.toJSON();
-          localStorage.setItem("konva", json);
+          const obj = JSON.parse(json);
+          const childNodes = obj.children[0].children;
+          childNodes.forEach((child) => {
+            if (child.className === 'Image') {
+                let {name} = child.attrs;
+                console.log('in get', blobMap[name]);
+                if (blobMap[name]) {
+                  child.attrs.name = blobMap[name];
+                  console.log('success', name, child.attrs.name);
+                }
+            }
+          });
+          
+          console.log('find blob url from here', obj);
+          localStorage.setItem("konva", JSON.stringify(obj));
         }}
       >
         Save JSON to browser
