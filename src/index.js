@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { render } from "react-dom";
 import { Image } from "react-konva";
 import useImage from "use-image";
@@ -28,8 +28,22 @@ function App() {
   const [blobs, setBlob] = useState([]);
   const [blobMap, setBlobMap] = useState({});
   const [texts, setTexts] = useState([]);
-  const loadStage = () => {
-    const str = localStorage.getItem("konva");
+
+  useEffect(() => {
+    const {pathname} = window.location;
+    const doGET = pathname.startsWith('/comics/');
+    if (doGET) {
+      const comicID = pathname.split('/').pop();
+      fetch('/comics?id=' + comicID)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(loadStage);      
+    }
+  }, []);
+  // TODO: test with and without json param
+  const loadStage = (optionalJSON) => {
+    const str = optionalJSON || localStorage.getItem("konva");
     if (str) {
       const obj = JSON.parse(str);
       const texts = obj.children[0].children
@@ -41,7 +55,7 @@ function App() {
         .filter(child => child.className === "Image")
         .map(obj => obj.attrs);
 
-      console.log("find base64 from here", imageObjects[0]);
+      // TODO: test base64 is in imageObjects[0]);
       setBlob(imageObjects);
     }
   };

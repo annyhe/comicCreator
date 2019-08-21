@@ -1,10 +1,13 @@
 DONE
 - save images to google drive, with base64 from POST body
-- load images from google drive
 - post to cloudinary
 - save to salesforce: create new comic record with name, json, and url from cloudinary 
+- load editable comic from salesforce record
 
 TODO
+- change the salesforce record page: button should go to 
+http://localhost:3000/comics/{recordID}
+- load sketches, images to be edited from google drive
     
 
 BUGS

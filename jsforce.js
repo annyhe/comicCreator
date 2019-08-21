@@ -63,19 +63,6 @@ if (deployToWeb) {
     res.json({ status: "online" });
   });
 
-  app.get("/contacts/", function(req, res) {
-    conn.query("SELECT Id, Name, CreatedDate FROM Contact", function(
-      err,
-      result
-    ) {
-      if (err) {
-        res.json(err);
-      }
-      console.log("total : " + result.totalSize);
-      res.json(result);
-    });
-  });
-
   //setup actual server
   var server = app.listen(port, function() {
     console.log("jsforce sample running on " + port);
@@ -190,7 +177,10 @@ function createComic(name, json, imageURL) {
     console.log("create");
     conn
       .sobject("Comic__c")
-      .create({ Name: name, json__c: json, URL__c: imageURL}, function(err, ret) {
+      .create({ Name: name, json__c: json, URL__c: imageURL }, function(
+        err,
+        ret
+      ) {
         if (err || !ret.success) {
           reject(err, ret);
         } else {
@@ -198,6 +188,22 @@ function createComic(name, json, imageURL) {
           resolve(ret.id);
         }
       });
+  });
+}
+
+function getComicById(id) {
+  console.log("in server", id);
+  return new Promise(function(resolve, reject) {
+    conn.query(
+      "SELECT Id, Name, json__c FROM Comic__c WHERE ID = '" + id + "' LIMIT 1",
+      function(err, result) {
+        if (err) {
+          return reject(err);
+        }
+        // 1 or 0 rows
+        resolve(result.records);
+      }
+    );
   });
 }
 
@@ -230,41 +236,13 @@ function deleteContact() {
         console.log("Deleted Successfully : " + ret.id);
       });
     });
-}
-
-//to test out the above code on the command line:
-//node index.js {command}
-//
-//where command is one of the case statements below
-var callback = null;
-if (process.argv[2]) {
-  console.log(process.argv[2]);
-  switch (process.argv[2]) {
-    case "displayContactsSOQL":
-      console.log("1");
-      callback = displayContactsSOQL;
-      break;
-    case "displayContactsEventMethod":
-      console.log("2");
-      callback = displayContactsEventMethod;
-      break;
-    case "displayContactsMethodChain":
-      console.log("3");
-      callback = displayContactsMethodChain;
-      break;
-    case "createComic":
-      callback = createComic;
-      break;
-    case "updateContact":
-      callback = updateContact;
-      break;
-    case "deleteContact":
-      callback = deleteContact;
-      break;
-  }
-}
+} 
 
 function loginAndCreateComic(...args) {
   return login().then(() => createComic(...args));
 }
-module.exports = { loginAndCreateComic };
+function loginAndGetComic(id) {
+    return login().then(() => getComicById(id));
+}
+
+module.exports = { loginAndCreateComic, loginAndGetComic };

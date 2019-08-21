@@ -22,6 +22,25 @@ function KonvaStage(props) {
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState();
   const [isMouseClicked, setIsMouseClicked] = useState();
+  const setJSON = () => {
+    const { blobMap } = props;
+    const json = stageRef.current.toJSON();
+    const obj = JSON.parse(json);
+    const childNodes = obj.children[0].children;
+    // loop through and find image nodes. change their blob to base64
+    childNodes.forEach(child => {
+      if (child.className === "Image") {
+        let { name } = child.attrs;
+        if (blobMap[name]) {
+          child.attrs.name = blobMap[name];
+          console.log("success", name, child.attrs.name);
+        }
+      }
+    });
+
+    // TODO: test blob url is in image objects
+    localStorage.setItem("konva", JSON.stringify(obj));
+  }
   const handleMouseMove = () => {
     if (!isDrawing || !isMouseClicked) {
       return;
@@ -91,26 +110,7 @@ function KonvaStage(props) {
         <button onClick={saveToSalesforce}>Save to Salesforce</button>
       </div>
       <button
-        onClick={() => {
-          console.log("set to json");
-          const { blobMap } = props;
-          const json = stageRef.current.toJSON();
-          const obj = JSON.parse(json);
-          const childNodes = obj.children[0].children;
-          // loop through and find image nodes. change their blob to base64
-          childNodes.forEach(child => {
-            if (child.className === "Image") {
-              let { name } = child.attrs;
-              if (blobMap[name]) {
-                child.attrs.name = blobMap[name];
-                console.log("success", name, child.attrs.name);
-              }
-            }
-          });
-
-          console.log("find blob url from here", obj);
-          localStorage.setItem("konva", JSON.stringify(obj));
-        }}
+        onClick={setJSON}
       >
         Save JSON to browser
       </button>
