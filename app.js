@@ -5,7 +5,7 @@ const cloudinary = require("cloudinary");
 const authList = require("./googleDrive").authList;
 const listFiles = require("./googleDrive").listFiles;
 const uploadFile = require("./googleDrive").uploadFile;
-const loginAndCreateContact = require("./jsforce").loginAndCreateContact;
+const loginAndCreateComic = require("./jsforce").loginAndCreateComic;
 const app = express();
 
 // Serve the static files from the React app
@@ -20,36 +20,31 @@ app.use(
   })
 );
 
-app.post("/api/saveToSalesforce", (req, res) => {
-    console.log(req.body);
-    const { name, data } = req.body;
-  
-    loginAndCreateContact()
-    .then((recordID) => {
-        console.log('created record with ID', recordID);
-        res.json(recordID);
-    })
-});
-
-// TODO; get the url from here and use post to salesforce
-app.post("/api/saveToCloudinary", (req, res) => {
-  console.log(req.body);
+// cloud = [cloudinary, salesforce]
+app.post("/api/saveToCloud", (req, res) => {
   const { name, data } = req.body;
-
-  cloudinary.v2.uploader.upload(
-    data,
-    {
-      overwrite: true,
-      invalidate: true
-    },
-    function(error, result) {
-      if (result) {
-        res.json(result.secure_url);
-      } else if (error) {
-        console.log("Error from saveToCloudinary", error);
+  return new Promise(function(resolve, reject) {
+    cloudinary.v2.uploader.upload(
+      data,
+      {
+        overwrite: true,
+        invalidate: true
+      },
+      function(error, result) {
+        if (result) {
+          let cloudinaryImageURL = result.secure_url;
+          console.log("cloudinary url", cloudinaryImageURL);
+          resolve(loginAndCreateComic(name, data, cloudinaryImageURL));
+        } else if (error) {
+          console.log("Error from saveToCloudinary", error);
+          reject(error);
+        }
       }
-    }
-  );
+    );
+  }).then(recordID => {
+    console.log("created record with ID", recordID);
+    res.json(recordID);
+  });
 });
 
 // get google drive sketchobook folder files
@@ -61,17 +56,15 @@ app.get("/api/getList", (req, res) => {
     });
 });
 
-app.post("/api/postImage", (req, res) => {
-  console.log(req.body);
-  const { name, data } = req.body;
-  authList()
+function postToGoogleDrive(name, data) {
+    authList()
     .then(oAuth2Client => uploadFile(oAuth2Client, name, data))
     .then(fileID => {
       if (fileID) {
         res.json(fileID);
       }
     });
-});
+}
 
 // Handles any requests that don't match the ones above
 app.get("*", (req, res) => {

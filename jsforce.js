@@ -185,12 +185,12 @@ function displayContactsMethodChain() {
     });
 }
 
-function createContact() {
+function createComic(name, data, imageURL) {
   return new Promise(function(resolve, reject) {
     console.log("create");
     conn
-      .sobject("Contact")
-      .create({ FirstName: "APIDemo", LastName: "User" }, function(err, ret) {
+      .sobject("Comic__c")
+      .create({ Name: name, json__c: data, URL__c: imageURL}, function(err, ret) {
         if (err || !ret.success) {
           reject(err, ret);
         } else {
@@ -252,8 +252,8 @@ if (process.argv[2]) {
       console.log("3");
       callback = displayContactsMethodChain;
       break;
-    case "createContact":
-      callback = createContact;
+    case "createComic":
+      callback = createComic;
       break;
     case "updateContact":
       callback = updateContact;
@@ -264,7 +264,7 @@ if (process.argv[2]) {
   }
 }
 
-function loginAndCreateContact() {
-  return login().then(createContact);
+function loginAndCreateComic(...args) {
+  return login().then(() => createComic(...args));
 }
-module.exports = { loginAndCreateContact };
+module.exports = { loginAndCreateComic };
