@@ -2,10 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cloudinary = require("cloudinary");
-const app = express();
 const authList = require("./googleDrive").authList;
 const listFiles = require("./googleDrive").listFiles;
 const uploadFile = require("./googleDrive").uploadFile;
+const loginAndCreateContact = require("./jsforce").loginAndCreateContact;
+const app = express();
+
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "client/build")));
 
@@ -18,6 +20,18 @@ app.use(
   })
 );
 
+app.post("/api/saveToSalesforce", (req, res) => {
+    console.log(req.body);
+    const { name, data } = req.body;
+  
+    loginAndCreateContact()
+    .then((recordID) => {
+        console.log('created record with ID', recordID);
+        res.json(recordID);
+    })
+});
+
+// TODO; get the url from here and use post to salesforce
 app.post("/api/saveToCloudinary", (req, res) => {
   console.log(req.body);
   const { name, data } = req.body;
