@@ -84,7 +84,8 @@ function uploadFile(auth) {
   }).then(() => {
     const drive = google.drive({ version: "v3", auth });
     const fileMetadata = {
-      name: fileName
+      name: fileName,
+      parents: [fileId]
     };
     const media = {
       mimeType: "image/jpeg",
