@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const authList = require('./googleDrive').authList;
@@ -8,6 +9,11 @@ const uploadFile = require('./googleDrive').uploadFile;
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+// parse request body
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 // get google drive sketchobook folder files
 app.get('/api/getList', (req,res) => {
     authList()
@@ -18,8 +24,10 @@ app.get('/api/getList', (req,res) => {
 });
 
 app.post('/api/postImage', (req,res) => {
+    console.log(req.body);
+    const {name, data} = req.body;
     authList()
-    .then((oAuth2Client) => uploadFile(oAuth2Client))
+    .then((oAuth2Client) => uploadFile(oAuth2Client, name, data))
     .then((fileID) => {
         if (fileID) {
             res.json(fileID);

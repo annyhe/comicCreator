@@ -1,12 +1,9 @@
-TODO:
-
+DONE
+- save images to google drive, with base64 from POST body
 - load images from google drive
-- save images to google drive
+
+TODO
 
 
-react-image-crop
-- can load files from file picker, auto-loads from sample file in /src
-- press button to save selected image as a blob
-
-bugs
+BUGS
 - for text only: load stage, change something, load stage, expect to revert to loaded state, yet nothing changed
