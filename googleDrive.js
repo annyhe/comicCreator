@@ -9,20 +9,22 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 // time.
 const TOKEN_PATH = "token.json";
 
-// Load client secrets from a local file.
-fs.readFile("credentials.json", (err, content) => {
-  if (err) return console.log("Error loading client secret file:", err);
-  // Authorize a client with credentials, then call the Google Drive API.
-  authorize(JSON.parse(content), uploadFile); // listFiles
-});
+function authList() {
+  new Promise(function(resolve, reject) {
+    fs.readFile("credentials.json", function(err, content) {
+      if (err) reject("Error loading client secret file:", err);
+      else resolve(content);
+    });
+  }).then(content => {
+    return authorize(JSON.parse(content), listFiles); // listFiles, uploadFile
+  });
+}
 
 /**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
+ * Create an OAuth2 client with the given credentials
  * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -31,10 +33,15 @@ function authorize(credentials, callback) {
   );
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getAccessToken(oAuth2Client, callback);
+  new Promise(function(resolve) {
+    fs.readFile(TOKEN_PATH, function(err, token) {
+      // not tested
+      if (err) resolve(getAccessToken(oAuth2Client, callback));
+      else resolve(token);
+    });
+  }).then(token => {
     oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
+    return listFiles(oAuth2Client);
   });
 }
 
@@ -119,25 +126,29 @@ function uploadFile(auth) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 function listFiles(auth) {
-  const drive = google.drive({ version: "v3", auth });
-  drive.files.list(
-    {
-      pageSize: 10,
-      fileId: fileId,
-      fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime)",
-      q: `'${fileId}' in parents`
-    },
-    (err, res) => {
-      if (err) return console.log("The API returned an error: " + err);
-      const files = res.data.files;
-      if (files.length) {
-        console.log("Files:");
-        files.map(file => {
-          console.log(`${file.name} (${file.id})`);
-        });
-      } else {
-        console.log("No files found.");
+  return new Promise(function(resolve, reject) {
+    const drive = google.drive({ version: "v3", auth });
+    drive.files.list(
+      {
+        pageSize: 10,
+        fileId: fileId,
+        fields:
+          "nextPageToken, files(id, name, parents, mimeType, modifiedTime)",
+        q: `'${fileId}' in parents`
+      },
+      (err, res) => {
+        if (err) reject("The google drive API returned an error: " + err);
+        const files = res.data.files;
+        if (files.length) {
+          console.log("Files:", files);
+          resolve(files);
+        } else {
+            console.log("No files found.");
+            resolve([]);    
+        }
       }
-    }
-  );
+    );
+  });
 }
+
+module.exports = { authList };
