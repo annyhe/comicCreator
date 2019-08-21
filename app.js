@@ -2,18 +2,27 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const authList = require('./googleDrive').authList;
+const listFiles = require('./googleDrive').listFiles;
+const uploadFile = require('./googleDrive').uploadFile;
 
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-// An api endpoint that returns a short list of items
+// get google drive sketchobook folder files
 app.get('/api/getList', (req,res) => {
-    // var list = ["item1", "item2", "item3"];
     authList()
+    .then((oAuth2Client) => listFiles(oAuth2Client))
     .then((files) => {
-        if (files && files.length) {
             res.json(files);
-            console.log('Sent list of items', files);        
+    })
+});
+
+app.post('/api/postImage', (req,res) => {
+    authList()
+    .then((oAuth2Client) => uploadFile(oAuth2Client))
+    .then((fileID) => {
+        if (fileID) {
+            res.json(fileID);
         }
     })
 });
