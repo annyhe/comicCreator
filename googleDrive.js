@@ -10,13 +10,13 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 const TOKEN_PATH = "token.json";
 
 function authList() {
-  new Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     fs.readFile("credentials.json", function(err, content) {
       if (err) reject("Error loading client secret file:", err);
       else resolve(content);
     });
   }).then(content => {
-    return authorize(JSON.parse(content), listFiles); // listFiles, uploadFile
+    return authorize(JSON.parse(content));
   });
 }
 
@@ -33,16 +33,17 @@ function authorize(credentials) {
   );
 
   // Check if we have previously stored a token.
-  new Promise(function(resolve) {
+  return new Promise(function(resolve) {
     fs.readFile(TOKEN_PATH, function(err, token) {
-      // not tested
+      // TODO: test
       if (err) resolve(getAccessToken(oAuth2Client, callback));
       else resolve(token);
     });
-  }).then(token => {
-    oAuth2Client.setCredentials(JSON.parse(token));
-    return listFiles(oAuth2Client);
-  });
+  })
+    .then(token => {
+      oAuth2Client.setCredentials(JSON.parse(token));
+      return listFiles(oAuth2Client);
+    });
 }
 
 /**
@@ -143,8 +144,8 @@ function listFiles(auth) {
           console.log("Files:", files);
           resolve(files);
         } else {
-            console.log("No files found.");
-            resolve([]);    
+          console.log("No files found.");
+          resolve([]);
         }
       }
     );

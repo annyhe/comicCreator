@@ -9,9 +9,13 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 // An api endpoint that returns a short list of items
 app.get('/api/getList', (req,res) => {
     // var list = ["item1", "item2", "item3"];
-    const files = authList();
-    res.json(files);
-    console.log('Sent list of items', files);
+    authList()
+    .then((files) => {
+        if (files && files.length) {
+            res.json(files);
+            console.log('Sent list of items', files);        
+        }
+    })
 });
 
 // Handles any requests that don't match the ones above
