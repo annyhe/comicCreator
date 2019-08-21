@@ -43,7 +43,7 @@ function App() {
   }, []);
   // TODO: test with and without json param
   const loadStage = (optionalJSON) => {
-    const str = optionalJSON || localStorage.getItem("konva");
+    const str = typeof optionalJSON === 'string' ? optionalJSON : localStorage.getItem("konva");
     if (str) {
       const obj = JSON.parse(str);
       const texts = obj.children[0].children

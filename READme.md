@@ -2,13 +2,11 @@ DONE
 - save images to google drive, with base64 from POST body
 - post to cloudinary
 - save to salesforce: create new comic record with name, json, and url from cloudinary 
-- load editable comic from salesforce record
+- click on button to editable comic from salesforce record
 
 TODO
-- change the salesforce record page: button should go to 
-http://localhost:3000/comics/{recordID}
 - load sketches, images to be edited from google drive
-    
+- image loaded from json needs to have transformer, to make it bigger/smaller
 
 BUGS
 - CORB on accessing google drive file from Salesforce, causing image broken if formula(googleDriveURL). alternatives
