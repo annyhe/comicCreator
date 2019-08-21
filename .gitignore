@@ -2,5 +2,6 @@ node_modules
 settings.sh
 token.json
 credentials.json
+config.json
 *.png
 *.jpg
