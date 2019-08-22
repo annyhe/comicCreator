@@ -53,9 +53,6 @@ input[type="file"] {
 
 /** THUMBNAILS GRID **/
 .thumbnails.grid a {
-  width: calc(25% - 4px);
-}
-.thumbnails.grid a.double {
   width: calc(50% - 4px);
 }
 .thumbnails.grid img {
@@ -65,7 +62,7 @@ input[type="file"] {
 /** RESPONSIVENESS **/
 @media (max-width: 1500px) {
   .thumbnails.grid a {
-    width: calc(25% - 4px);
+    width: calc(33.33% - 4px);
   }
 }
 

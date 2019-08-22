@@ -27,6 +27,7 @@ const LionImage = props => {
 
 function App() {
   const [blobs, setBlob] = useState([]);
+  const [googleImages, setGoogleImages] = useState([]);
   const [blobMap, setBlobMap] = useState({});
   const [texts, setTexts] = useState([]);
   const [showImageGrid, setImageGrid] = useState(); 
@@ -61,13 +62,29 @@ function App() {
       setBlob(imageObjects);
     }
   };
+  const showGridWithData = () => {
+    if (!googleImages || !googleImages.length) {
+      fetch('/api/getList')
+      .then(function(response) {
+        return response.json();
+      })
+      .then((images) => {
+        const copyImages = images.map((image) => {
+          image.url = 'http://drive.google.com/uc?export=view&id=' + image.id;
+          return image;
+        })
+        setGoogleImages(copyImages);
+        setImageGrid(true);
+      });  
+    } else {
+      setImageGrid(true);
+    }
+  }
 
   return (
     <div>
-      <button onClick={() => {
-        setImageGrid(true);
-      }}>Load from Google Drive</button>
-      {showImageGrid && <ImageGrid closeImageGrid={() => setImageGrid()}/>}
+      <button onClick={showGridWithData}>Load from Google Drive</button>
+      {showImageGrid && <ImageGrid images={googleImages} closeImageGrid={() => setImageGrid()}/>}
       <Crop
         setBlobMapping={([key, value]) => {
           blobMap[key] = value;
@@ -91,7 +108,6 @@ function App() {
           />
         ))}
         {blobs.map((blob, index) => {
-          console.log(blob);
           return (
             <LionImage
               key={index}
