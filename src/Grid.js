@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-
+import React from "react";
+// inspired by https://codepen.io/AkinBilgic
 function ImageGrid(props) {
   return (
     <div className="wrapper">

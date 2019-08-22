@@ -22,6 +22,21 @@ app.use(
   })
 );
 
+// http://localhost:5000/api/convertUrlToBase64/http://drive.google.com/uc?export=view&id=11C2jZ6qhT6czVbzFbl-H2PSMkyyLSeea
+app.get("/api/convertUrlToBase64/:url", (req, res) => {
+  const { url } = req.params;
+  const image2base64 = require("image-to-base64");
+  image2base64(
+    url
+  ) // you can also to use url
+    .then(response => {
+      res.json('data:image/jpeg;base64,' + response); //cGF0aC90by9maWxlLmpwZw==
+    })
+    .catch(error => {
+      res.json(error); //Exepection error....
+    });
+});
+
 // cloud = [cloudinary, salesforce]
 app.post("/api/saveToCloud", (req, res) => {
   const { name, data, json } = req.body;
@@ -60,18 +75,17 @@ app.get("/api/getList", (req, res) => {
 
 // http://localhost:5000/comics?id=a052E00000N626OQAR
 app.get("/comics", function(req, res) {
-    const {id} = req.query;
-    console.log("get record with ID", id);
-    loginAndGetComic(id)
-    .then(records => {
-        if (records && records.length) {
-            return res.json(records[0].json__c);
-        }
-    });    
+  const { id } = req.query;
+  console.log("get record with ID", id);
+  loginAndGetComic(id).then(records => {
+    if (records && records.length) {
+      return res.json(records[0].json__c);
+    }
+  });
 });
 
 function postToGoogleDrive(name, data) {
-    authList()
+  authList()
     .then(oAuth2Client => uploadFile(oAuth2Client, name, data))
     .then(fileID => {
       if (fileID) {
@@ -82,8 +96,8 @@ function postToGoogleDrive(name, data) {
 
 // Handles any requests that don't match the ones above
 app.get("*", (req, res) => {
-    // pass data to here 
-    // ie. on http://localhost:3000/comics/{comicID}, do a GET on salesforce record with ID == comicID
+  // pass data to here
+  // ie. on http://localhost:3000/comics/{comicID}, do a GET on salesforce record with ID == comicID
   res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 

@@ -84,13 +84,20 @@ function App() {
       setImageGrid(true);
     }
   };
-  const getSelectedImageUrl = (e => {
+  const getSelectedImageUrl = e => {
     if (e && e.target.nodeName === "IMG") {
       const url = e.target.src;
-      setSelectedImageUrl(url);
-      console.log(url);
+      // if url is remote, need to get it encodeURIComponent(this.props.imageToCropUrl)
+      fetch('/api/convertUrlToBase64/' + encodeURIComponent(url))
+        .then(function(response) {
+          return response.json();
+        })
+        .then(base64String => {
+          setSelectedImageUrl(base64String);
+          console.log(base64String);
+        });
     }
-  });
+  };
 
   return (
     <div>
