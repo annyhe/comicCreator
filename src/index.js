@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { render } from "react-dom";
 import { Image } from "react-konva";
 import useImage from "use-image";
+import ImageGrid from "./Grid";
 import Crop from "./Crop";
 import KonvaStage from "./KonvaStage";
 import EditableText from "./EditableText";
@@ -28,6 +29,7 @@ function App() {
   const [blobs, setBlob] = useState([]);
   const [blobMap, setBlobMap] = useState({});
   const [texts, setTexts] = useState([]);
+  const [showImageGrid, setImageGrid] = useState(); 
 
   useEffect(() => {
     const {pathname} = window.location;
@@ -59,9 +61,13 @@ function App() {
       setBlob(imageObjects);
     }
   };
+
   return (
     <div>
-      <button>Load from Google Drive</button>
+      <button onClick={() => {
+        setImageGrid(true);
+      }}>Load from Google Drive</button>
+      {showImageGrid && <ImageGrid closeImageGrid={() => setImageGrid()}/>}
       <Crop
         setBlobMapping={([key, value]) => {
           blobMap[key] = value;

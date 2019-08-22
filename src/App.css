@@ -2,13 +2,14 @@
   font-family: sans-serif;
   text-align: center;
   box-sizing: border-box;
+  height: 100%;
 }
 .stage {
   display: flex;
   flex-wrap: wrap;
-
 }
-button, .file-upload {
+button,
+.file-upload {
   height: 32px;
   text-transform: uppercase;
   background: purple;
@@ -24,4 +25,52 @@ button, .file-upload {
 
 input[type="file"] {
   display: none;
-} 
+}
+
+/** THUMBNAILS GLOBALS **/
+.cross {
+  text-align: right;
+  margin: 2px;
+}
+.thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+}
+.thumbnails a {
+  height: 300px;
+  margin: 2px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.thumbnails img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.thumbnails a:hover img {
+  transform: scale(1.05);
+}
+
+/** THUMBNAILS GRID **/
+.thumbnails.grid a {
+  width: calc(25% - 4px);
+}
+.thumbnails.grid a.double {
+  width: calc(50% - 4px);
+}
+.thumbnails.grid img {
+  width: 100%;
+}
+
+/** RESPONSIVENESS **/
+@media (max-width: 1500px) {
+  .thumbnails.grid a {
+    width: calc(25% - 4px);
+  }
+}
+
+@media (max-width: 500px) {
+  .thumbnails.grid a {
+    width: calc(50% - 4px);
+  }
+}
