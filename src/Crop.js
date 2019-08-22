@@ -4,21 +4,11 @@ import "react-image-crop/dist/ReactCrop.css";
 import toCrop from './toCrop.png'; 
 import "./App.css";
 
-class Crop extends PureComponent {
+class Crop extends PureComponent { 
   state = {
-    src: toCrop,
-  };
-
-  onSelectFile = e => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        this.setState({ src: reader.result })
-      });
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
+    crop: '',
+    croppedImageUrl: ''
+  }
   // If you setState the crop in here you should return false.
   onImageLoaded = image => {
     this.imageRef = image;
@@ -86,19 +76,13 @@ class Crop extends PureComponent {
   }
 
   render() {
-    const { crop, croppedImageUrl, src } = this.state;
-
+    const { crop, croppedImageUrl } = this.state;
+    const imageUrl = this.props.imageToCropUrl || toCrop;
     return (
       <div className="App">
-        <div>
-        <label htmlFor="file-upload" className="file-upload">
-            Upload File
-        </label>
-          <input type="file" id="file-upload" onChange={this.onSelectFile} />
-        </div>
-        {src && (
+        {imageUrl && (
           <ReactCrop
-            src={src}
+            src={imageUrl}
             crop={crop}
             onImageLoaded={this.onImageLoaded}
             onComplete={this.onCropComplete}

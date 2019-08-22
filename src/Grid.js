@@ -7,11 +7,7 @@ function ImageGrid(props) {
         <button onClick={props.closeImageGrid}>Close</button>
       </p>
       <div
-        onClick={e => {
-          if (e && e.target.nodeName === "IMG") {
-            console.log(e.target.alt);
-          }
-        }}
+        onClick={props.getSelectedImageUrl}
         className="thumbnails grid"
       >
         {props.images.map(image => (
