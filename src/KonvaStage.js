@@ -16,6 +16,7 @@ function downloadURI(uri, name) {
 
 function KonvaStage(props) {
   const stageRef = useRef(null);
+  const layerRef = useRef(null);
   const [selectedShapeName, setSelectedShapeName] = useState([]);
   const [width, setWidth] = useState(SHORT);
   const [height, setHeight] = useState(LONG);
@@ -42,24 +43,37 @@ function KonvaStage(props) {
     localStorage.setItem("konva", JSON.stringify(obj));
   }
   const handleMouseMove = () => {
+      console.log('in handleMouseMove');
     if (!isDrawing || !isMouseClicked) {
       return;
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition();
+    console.log('before lines');
+
     if (lines.length) {
+      console.log('some lines');
+
       let lastLine = lines[lines.length - 1];
       lastLine = lastLine.concat([point.x, point.y]);
       lines.splice(lines.length - 1, 1, lastLine);
+      console.log('lines', lines);
       setLines(lines.concat());
     }
   };
   const saveToSalesforce = () => {
     const url = "/api/saveToCloud";
+    // x, y are rectangle coordinates 
+    const rectangle = layerRef.current.clip({
+        x: 100,
+        y: 100,
+        width,
+        height
+    });
+
     const dataObject = {
-      name: "example.jpg",
-      json: stageRef.current.toJSON(),
-      data: stageRef.current.toDataURL()
+      json: rectangle.toJSON(),
+      data: rectangle.toDataURL()
     };
 
     fetch(url, {
@@ -80,8 +94,7 @@ function KonvaStage(props) {
         around.
       </p>
       <div className="stage">
-        <button onClick={() => setIsDrawing(true)}>Start drawing</button>
-        <button onClick={() => setIsDrawing()}>Stop drawing</button>
+        <button onClick={() => setIsDrawing(true)}>Draw a line</button>
         <button onClick={props.addText}>Add text</button>
         <button
           onClick={() => {
@@ -133,7 +146,9 @@ function KonvaStage(props) {
         onClick={e => setSelectedShapeName(e.target.name())}
         ref={stageRef}
       >
-        <Layer>
+        <Layer
+        ref={layerRef}
+        >
           {lines.map((line, i) => (
             <Line
               key={i}

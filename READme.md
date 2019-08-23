@@ -17,7 +17,7 @@ administrative
 - text on "Load from google drive" to "close", or hide it when the image grid is open
 - image loaded from json needs to have transformer, to make it bigger/smaller
 - on edit text: textarea is very far from the text
-- save image needs to save rectangle, instead of the entire stage. Saving the entire stage exceeds POST size
+- consider sending raw binary instead of base64 over to salesforce, as the data field was 199KB
 - button to remove all from the rectangle/stage
 - button to mirror the image, where does it go? 3 places
 - name the panel: use einstein object detection for suggestions? goal: minimize typing while being descriptive
@@ -27,4 +27,5 @@ administrative
 - multi-panel: how to model that in Salesforce?
 - clean up Salesforce org
 - create Salesforce reports and dashboards to track productivity
+
 
